@@ -1,0 +1,167 @@
+﻿@model IEnumerable<MyEcommerce.Models.CartItems>
+
+@{
+    ViewData["Title"] = "Payment";
+}
+@{
+    decimal gt = 0;
+}
+
+
+<style>
+    a {
+        text-decoration: none;
+    }
+</style>
+
+<div class="alert-info">
+    @ViewBag.Message
+</div>
+<h1>Cart Items</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th scope="col">Item Pic</th>
+            <th scope="col">Name</th>
+            <th scope="col">Price</th>
+            <th scope="col">Qunatity</th>
+            <th scope="col">Sub Total</th>
+            <th scope="col">Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr style="vertical-align:middle">
+                <td>
+                    <img style="height:50px;width:150px;"
+                         src='@Url.Action("ItemImageRetreiver", "Payment", new { productid = item.ProductId })' alt="Item Pic" />
+                </td>
+                <td>@item.ForeignProductID.ProductName</td>
+                <td>$@Convert.ToDecimal(item.ForeignProductID.ProductPrice).ToString("#,##0.00")</td>
+                <td>
+                    <a href="@Url.Action("DecreaseItemQuantity", "Payment", new { cartitemId = item.Id })" class="badge bg-danger">-</a>
+                    <b>@item.Quantity</b>
+                    <a href="@Url.Action("IncreasItemQuantity", "Payment", new { cartitemId = item.Id })" class="badge bg-success">+</a>
+                </td>
+                <td>
+                    $@Convert.ToDecimal(item.Quantity * item.ForeignProductID.ProductPrice).ToString("#,##0.00")
+                    @{ gt = gt + Convert.ToDecimal(item.Quantity * item.ForeignProductID.ProductPrice);}
+                </td>
+                <td><a href="/Payment/RemoveCartItem?itemid=@item.Id" class="btn btn-sm btn-outline-danger">Remove</a></td>
+            </tr>
+        }
+        <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <th></th>
+            <th id="grandtotal">Grand Total =  $@gt.ToString("#,##0.00")</th>
+            <th></th>
+        </tr>
+    </tbody>
+</table>
+<button hidden id="orderbtn" style="float:right;" class="btn btn-success" onclick="$('#OrderDetailsModal').modal('show')">Place your Order Now!</button>
+<a href="/Home/ProductsList">Continue Shopping</a>
+
+<!-- Button trigger modal -->
+<!--<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+    Launch demo modal
+</button>-->
+<!-- Modal -->
+<div class="modal fade" id="OrderDetailsModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Order Processing Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="OrderForm">
+                    <div class="form-group">
+                        <label class="control-label">Email Address</label>
+                        <input class="form-control" placeholder="Email Address" required id="email" />
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">Phone Number</label>
+                        <input class="form-control" placeholder="Phone Number" required id="phonenumber" />
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">Address Detail</label>
+                        <textarea class="form-control" rows="5" placeholder="Address Details" required id="address"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-warning" onclick="PlaceOrder()">Process Order</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    $(document).ready(function () {
+        if (@Model.Count()!= 0) {
+            $("#orderbtn").removeAttr("hidden");
+        }
+    });
+
+    function PlaceOrder() {
+
+        if (document.forms['OrderForm'].reportValidity() == true) {
+            var productids = [];
+            @foreach (var item in Model)
+            {
+                @:productids.push("@item.ProductId");
+            }
+            var quantities = [];
+            @foreach (var item in Model)
+            {
+                @:quantities.push("@item.Quantity");
+            }
+            var productPrices = [];
+            @foreach (var item in Model)
+            {
+                @:productPrices.push("@item.ForeignProductID.ProductPrice");
+            }
+
+
+            $.ajax({
+                type: "POST",
+                url: "/Payment/CreateOrder",
+                data: {
+                    ids: productids,
+                    quantities: quantities,
+                    prices: productPrices,
+                    email: $("#email").val(),
+                    phone: $("#phonenumber").val(),
+                    address: $("#address").val(),
+                },
+                success: function (data) {
+                    $('#OrderDetailsModal').modal('hide');
+                    Swal.fire(
+                        'Success',
+                        data,
+                        'success'
+                    )
+                },
+                error: function () {
+                    Swal.fire(
+                        'Error',
+                        'Something went wrong please try again later!',
+                        'error'
+                    )
+                }
+            });
+        } else {
+            Swal.fire(
+                'Warning',
+                'Please fill all details!',
+                'warning'
+            )
+        }
+    }
+</script>

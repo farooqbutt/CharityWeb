@@ -1,0 +1,103 @@
+﻿@model IEnumerable<MyEcommerce.Models.ProductOrder>
+
+@{
+    ViewData["Title"] = "Orders";
+}
+
+@if (User.IsInRole("Customer"))
+{
+    <h1>Orders History</h1>
+}
+else
+{
+    <h1>Customers Orders</h1>
+}
+
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Product Name
+            </th>
+            <th>
+                Order Date
+            </th>
+            <th>
+                Amount
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Quantity)
+            </th>
+            <th>
+                Total Amount
+            </th>
+            <th>
+                Status
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Email)
+            </th>
+            <th>
+                Phone
+            </th>
+            <th>
+                Address
+            </th>
+            @*<th>Actions</th>*@
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    <a href="/Home/ProductDescription?ProductId=@item.ProductId">@item.Product_Id.ProductName</a>
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.OrderDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ItemAmount)
+                </td>
+                <td>
+                    x @Html.DisplayFor(modelItem => item.Quantity)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.OrderTotalAmount)
+                </td>
+                <td>
+                    <span class="badge rounded-pill bg-primary">@item.OrderStatus</span>
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Email)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.PhoneNumber)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.AddressDetails)
+                </td>
+
+                @if (User.IsInRole("Manager"))
+                {
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                        <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                    </td>
+                }
+                else if (User.IsInRole("Staff"))
+                {
+                    <td>
+
+                        <a asp-action="Details" asp-route-id="@item.Id">Details</a> 
+                    </td>
+                }
+                else
+                {
+
+                }
+            </tr>
+        }
+    </tbody>
+</table>

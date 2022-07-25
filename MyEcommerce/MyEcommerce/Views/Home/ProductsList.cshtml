@@ -1,0 +1,64 @@
+﻿@model IEnumerable<MyEcommerce.InterfaceClasses.ProductListInterfaceClass>
+
+@{
+    ViewData["Title"] = "Products List";
+}
+
+@if (User.IsInRole("Manager"))
+{
+    <p style="float:right;">
+        <a class="btn btn-primary" asp-action="CreateProduct">Add New Product</a>
+    </p>
+}
+
+<h1>Charity Products List</h1>
+
+<div class="row">
+    @foreach (var item in Model)
+    {
+        <div class="card" style="width: 20rem;margin-left:7px;margin-top:7px;">
+            <img src="@item.ProductFirstImage" style="width:100%;height:100%" class="card-img-top" alt="Image">
+            <div class="card-body">
+                <h5 class="card-title">@item.ProductName</h5>
+                <p class="card-text">
+                    @if (item.ProductDescription.Length > 75)
+                    {
+                        <span title="Full Description: @item.ProductDescription">@item.ProductDescription.Substring(0, 75).ToString()...</span>
+                    }
+                    else
+                    {
+                        <span>@item.ProductDescription</span>
+                    }
+                </p>
+                <span class="badge badge-dark">Price : $@Convert.ToDecimal(@item.ProductPrice).ToString("#,##0.00")</span>
+                <a href="/Home/ProductDescription?ProductId=@item.Id" class="btn btn-primary btn-sm" style="float:right">See Details</a>
+
+                <button onclick="AddItemtoCart(@item.Id)"
+                        class="btn btn-outline-success btn-sm btn-block"
+                        style="margin-top:5px;">
+                    Add to Cart
+                </button>
+            </div>
+        </div>
+    }
+</div>
+
+
+<script>
+    function AddItemtoCart(productid) {
+        $.ajax({
+            type: "GET",
+            url: "/Payment/AddItemtoCart",
+            data: {
+                Productid: productid
+            },
+            success: function (data) {
+                alert(data);
+                window.location.reload();
+            },
+            error: function () {
+                alert("Something went wrong! Please try again later.");
+            }
+        });
+    }
+</script>

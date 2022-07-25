@@ -1,0 +1,53 @@
+﻿@model IEnumerable<MyEcommerce.Models.UserViewModel>
+@{
+    ViewData["Title"] = "Index";
+}
+
+<a style="float:right;" class="btn btn-primary" href="/Identity/Account/Register">Add New Staff/Customer</a>
+<h1>Users</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Email
+            </th>
+            <th>
+                Role
+            </th>
+            <th>
+                Action
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Email)
+                </td>
+                <td>
+                    @if (item.Role == "Manager")
+                    {
+                        <span class="badge rounded-pill bg-success">@item.Role</span>
+                    }
+                    else if (item.Role == "Staff")
+                    {
+                        <span class="badge rounded-pill bg-primary">@item.Role</span>
+                    }
+                    else
+                    {
+                        <span class="badge rounded-pill bg-secondary">@item.Role</span>
+                    }
+                </td>
+                <td>
+                    @if (item.Role != "Manager")
+                    {
+                        <button class="btn btn-sm btn-danger" title="The Delete button is not functional yet.">Delete</button>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

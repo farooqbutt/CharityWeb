@@ -1,0 +1,161 @@
+﻿@model Tuple<MyEcommerce.Models.Product, List<MyEcommerce.Models.ProductImage>, List<MyEcommerce.Models.Review>>
+
+@{
+    ViewData["Title"] = "Product Description";
+}
+
+<div>
+    <a asp-action="ProductsList" class="btn">Back to Products List</a>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                @Model.Item1.ProductName
+            </div>
+            <div class="card-body">
+                <img src="@Model.Item2.First().ImageData" style="width:100%;height:100%" />
+            </div>
+
+            <div style="margin-left:17px">
+                <ul class="nav nav-tabs" id="myTab" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home" type="button" role="tab" aria-controls="home" aria-selected="true">Description</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="false">Reviews</button>
+                    </li>
+                </ul>
+                <div class="tab-content" id="myTabContent">
+                    <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+                        <h1>Product Description</h1>
+                        <p>@Model.Item1.ProductDescription</p>
+                    </div>
+                    <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+                        <h1>Product Reviews</h1>
+                        @foreach (var item in Model.Item3)
+                        {
+                            <div class="row">
+                                <div class="col-md-9">
+                                    <p class="card-text">
+                                        @item.ReviewDescription
+                                    </p>
+                                </div>
+                                <div class="col-md-3">
+                                    &#9733; @Convert.ToDecimal(item.ReviewStars).ToString("#,##0.0")
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                Product Details
+            </div>
+            <div class="card-body">
+                <h5 class="card-title" style="font-size:40px;color:indianred">
+                    $@Convert.ToDecimal(Model.Item1.ProductPrice).ToString("#,##0.00")
+                    <span style="font-size:25px;color:lightgray">only</span>
+                </h5><br />
+                <div class="row">
+                    <div class="col-md-6">
+                        @if (Model.Item3.Count() != 0)
+                        {
+                            if ((Model.Item3.Sum(a => a.ReviewStars) / Model.Item3.Count()) >= 1 && (Model.Item3.Sum(a => a.ReviewStars) / Model.Item3.Count()) < 2)
+                            {
+                                <span style="font-size:20px">
+                                    &#9733;&#9734;&#9734;&#9734;&#9734;
+                                </span>
+                            }
+                            else if ((Model.Item3.Sum(a => a.ReviewStars) / Model.Item3.Count()) >= 2 && (Model.Item3.Sum(a => a.ReviewStars) / Model.Item3.Count()) < 3)
+                            {
+                                <span style="font-size:20px">
+                                    &#9733;&#9733;&#9734;&#9734;&#9734;
+                                </span>
+                            }
+                            else if ((Model.Item3.Sum(a => a.ReviewStars) / Model.Item3.Count()) >= 3 && (Model.Item3.Sum(a => a.ReviewStars) / Model.Item3.Count()) < 4)
+                            {
+                                <span style="font-size:20px">
+                                    &#9733;&#9733;&#9733;&#9734;&#9734;
+                                </span>
+                            }
+                            else if ((Model.Item3.Sum(a => a.ReviewStars) / Model.Item3.Count()) >= 4 && (Model.Item3.Sum(a => a.ReviewStars) / Model.Item3.Count()) < 5)
+                            {
+                                <span style="font-size:20px">
+                                    &#9733;&#9733;&#9733;&#9733;&#9734;
+                                </span>
+                            }
+                            else if ((Model.Item3.Sum(a => a.ReviewStars) / Model.Item3.Count()) >= 5)
+                            {
+                                <span style="font-size:20px">
+                                    &#9733;&#9733;&#9733;&#9733;&#9733;
+                                </span>
+                            }
+                            else
+                            {
+                                <span style="font-size:20px">
+                                    &#9734;&#9734;&#9734;&#9734;&#9734;
+                                </span>
+                            }
+                        }
+                        else
+                        {
+                            <span style="font-size:20px">
+                                &#9734;&#9734;&#9734;&#9734;&#9734;
+                            </span>
+                        }
+                        <span class="badge badge-success">
+                            @Model.Item3.Count()
+                        </span>
+                    </div>
+                    <div class="col-md-6">
+                        <a href="/Home/WriteReivew?ProductId=@Model.Item1.Id" style="color:indianred;text-decoration:none"><span style="font-weight:bold;font-size:20px;">&#x1F589;</span> Write a Review</a>
+                    </div>
+                </div>
+                <br />
+                <p><b>Date Posted: </b>@Model.Item1.PostedDatedTime</p>
+                <p><b>In Stock: </b>@Model.Item1.ProductStock</p>
+            </div>
+        </div>
+        <div class="card" style="margin-top:20px">
+            <div class="card-header">
+                <b>Buy this Product</b>
+            </div>
+            <div class="card-body">
+                <button onclick="AddItemtoCart(@Model.Item1.Id)"
+                        class="btn btn-outline-success btn-block"
+                        style="margin-top:5px;">
+                    Add to Shopping Cart
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function AddItemtoCart(productid) {
+        $.ajax({
+            type: "GET",
+            url: "/Payment/AddItemtoCart",
+            data: {
+                Productid: productid
+            },
+            success: function (data) {
+                alert(data);
+                window.location.reload();
+            },
+            error: function () {
+                alert("Something went wrong! Please try again later.");
+            }
+        });
+    }
+</script>
+
+
+
+

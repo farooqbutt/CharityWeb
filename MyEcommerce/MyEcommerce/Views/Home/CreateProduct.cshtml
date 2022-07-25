@@ -1,0 +1,83 @@
+﻿@model MyEcommerce.InterfaceClasses.CreateProductClass
+
+@{
+    ViewData["Title"] = "Create Product";
+}
+
+<h1>Add New Product</h1>
+
+<h4>Product Details</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="CreateProduct">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="ProductName" class="control-label">Product Name</label>
+                <input asp-for="ProductName" class="form-control" />
+                <span asp-validation-for="ProductName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ProductDescription" class="control-label">Product Description</label>
+                <textarea asp-for="ProductDescription" class="form-control" rows="5"></textarea>
+                <span asp-validation-for="ProductDescription" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ProductPrice" class="control-label">Product Price</label>
+                <input asp-for="ProductPrice" class="form-control" />
+                <span asp-validation-for="ProductPrice" class="text-danger"></span>
+            </div>
+            @*<div class="form-group">
+            <label asp-for="PostedDatedTime" class="control-label"></label>
+            <input asp-for="PostedDatedTime" class="form-control" />
+            <span asp-validation-for="PostedDatedTime" class="text-danger"></span>
+        </div>*@
+            <div class="form-group">
+                <label asp-for="ProductStock" class="control-label">Product Stock</label>
+                <input asp-for="ProductStock" class="form-control" />
+                <span asp-validation-for="ProductStock" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label class="control-label">Upload Profile Picture</label>
+                <input type="file" class="form-control" value="" id="ImageRender" />
+                <small id="emailHelp" class="form-text text-muted">You can only Choose 1 Image at this time!</small>
+                <input asp-for="ProductImage" style="display:none" type="text" class="form-control" value="" id="ImageRender1" />
+            </div>
+            @*<div class="form-group">
+            <label asp-for="ProdctAuthor" class="control-label"></label>
+            <input asp-for="ProdctAuthor" class="form-control" />
+            <span asp-validation-for="ProdctAuthor" class="text-danger"></span>
+        </div>*@
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary btn-block" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="ProductsList">Back to List</a>
+</div>
+
+<script>
+    $("#ImageRender").on('change', function () {
+        readURL(this);
+    });
+
+    function readURL(input) {
+        if (input.files && input.files[0]) {
+            var size = input.files[0].size;
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                if (size <= 1048576) {
+                    $("#ImageRender1").val(e.target.result);
+                }
+                else {
+                    alert("Image size should be less than 1 MB!\notherwise your image will not be uploaded.");
+                    $("#ImageRender1").val("");
+                }
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+</script>
