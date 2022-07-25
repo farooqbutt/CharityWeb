@@ -15,9 +15,6 @@
             <th>
                 Role
             </th>
-            <th>
-                Action
-            </th>
         </tr>
     </thead>
     <tbody>
@@ -39,12 +36,6 @@
                     else
                     {
                         <span class="badge rounded-pill bg-secondary">@item.Role</span>
-                    }
-                </td>
-                <td>
-                    @if (item.Role != "Manager")
-                    {
-                        <button class="btn btn-sm btn-danger" title="The Delete button is not functional yet.">Delete</button>
                     }
                 </td>
             </tr>

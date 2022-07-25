@@ -49,8 +49,7 @@ namespace MyEcommerce.Areas.Identity.Pages.Account
             [EmailAddress]
             [Display(Name = "Email")]
             public string Email { get; set; }
-            [Required]
-            [EmailAddress]
+
             [Display(Name = "Role")]
             public string Role { get; set; }
 
@@ -83,7 +82,14 @@ namespace MyEcommerce.Areas.Identity.Pages.Account
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User created a new account with password.");
-                    _ = await _userManager.AddToRoleAsync(user, "Customer");
+                    if (Input.Role == null)
+                    {
+                        _ = await _userManager.AddToRoleAsync(user, "Customer");
+                    }
+                    else
+                    {
+                        _ = await _userManager.AddToRoleAsync(user, Input.Role);
+                    }
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                     code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
                     var callbackUrl = Url.Page(

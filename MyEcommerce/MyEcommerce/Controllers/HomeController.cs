@@ -41,7 +41,7 @@ namespace MyEcommerce.Controllers
                 ProductPrice = product.ProductPrice,
                 PostedDatedTime = DateTime.Now,
                 ProductStock = product.ProductStock,
-                ProdctAuthor = User.Identity.Name
+                ProdctAuthor = product.ProdctAuthor
             };
             Context.Products.Add(RealProduct);
             Context.SaveChanges();

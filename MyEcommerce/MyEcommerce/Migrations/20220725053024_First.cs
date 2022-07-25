@@ -171,6 +171,27 @@ namespace MyEcommerce.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "CartItemsTobuy",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ProductId = table.Column<int>(nullable: false),
+                    Quantity = table.Column<int>(nullable: false),
+                    CartOwner = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CartItemsTobuy", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_CartItemsTobuy_Products_ProductId",
+                        column: x => x.ProductId,
+                        principalTable: "Products",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "ProductImages",
                 columns: table => new
                 {
@@ -185,6 +206,34 @@ namespace MyEcommerce.Migrations
                     table.ForeignKey(
                         name: "FK_ProductImages_Products_ProductIDforImage",
                         column: x => x.ProductIDforImage,
+                        principalTable: "Products",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ProductOrders",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ProductId = table.Column<int>(nullable: false),
+                    Quantity = table.Column<int>(nullable: false),
+                    OrderDate = table.Column<DateTime>(nullable: true),
+                    ItemAmount = table.Column<decimal>(nullable: false),
+                    OrderTotalAmount = table.Column<decimal>(nullable: false),
+                    OrderStatus = table.Column<string>(nullable: true),
+                    Email = table.Column<string>(nullable: true),
+                    PhoneNumber = table.Column<string>(nullable: true),
+                    AddressDetails = table.Column<string>(nullable: true),
+                    OrderingPersonEmail = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ProductOrders", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ProductOrders_Products_ProductId",
+                        column: x => x.ProductId,
                         principalTable: "Products",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -251,9 +300,19 @@ namespace MyEcommerce.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
+                name: "IX_CartItemsTobuy_ProductId",
+                table: "CartItemsTobuy",
+                column: "ProductId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_ProductImages_ProductIDforImage",
                 table: "ProductImages",
                 column: "ProductIDforImage");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ProductOrders_ProductId",
+                table: "ProductOrders",
+                column: "ProductId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Reviews_ProductID",
@@ -279,7 +338,13 @@ namespace MyEcommerce.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
+                name: "CartItemsTobuy");
+
+            migrationBuilder.DropTable(
                 name: "ProductImages");
+
+            migrationBuilder.DropTable(
+                name: "ProductOrders");
 
             migrationBuilder.DropTable(
                 name: "Reviews");

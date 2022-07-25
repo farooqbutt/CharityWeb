@@ -10,14 +10,14 @@ using MyEcommerce.Data;
 namespace MyEcommerce.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220719114546_Fourth")]
-    partial class Fourth
+    [Migration("20220725053024_First")]
+    partial class First
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "3.1.15")
+                .HasAnnotation("ProductVersion", "3.1.25")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
@@ -244,27 +244,6 @@ namespace MyEcommerce.Migrations
                     b.ToTable("CartItemsTobuy");
                 });
 
-            modelBuilder.Entity("MyEcommerce.Models.OrderItems", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int>("OderId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ProductId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Quantity")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("OrdersItems");
-                });
-
             modelBuilder.Entity("MyEcommerce.Models.Product", b =>
                 {
                     b.Property<int>("Id")
@@ -328,6 +307,9 @@ namespace MyEcommerce.Migrations
                     b.Property<string>("Email")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<decimal>("ItemAmount")
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<DateTime?>("OrderDate")
                         .HasColumnType("datetime2");
 
@@ -343,7 +325,15 @@ namespace MyEcommerce.Migrations
                     b.Property<string>("PhoneNumber")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
 
                     b.ToTable("ProductOrders");
                 });
@@ -436,6 +426,15 @@ namespace MyEcommerce.Migrations
                     b.HasOne("MyEcommerce.Models.Product", "ForeignImageProductId")
                         .WithMany()
                         .HasForeignKey("ProductIDforImage")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("MyEcommerce.Models.ProductOrder", b =>
+                {
+                    b.HasOne("MyEcommerce.Models.Product", "Product_Id")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

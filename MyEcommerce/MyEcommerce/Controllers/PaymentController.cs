@@ -87,7 +87,7 @@ namespace MyEcommerce.Controllers
             return RedirectToAction("Checkout", new { userid = User.Identity.Name });
         }
 
-        public string CreateOrder(int[] ids, int[] quantities, int[] prices, string email, string phone, string address)
+        public string CreateOrder(int[] ids, int[] quantities, decimal[] prices, string email, string phone, string address)
         {
             if (ids.Count() == quantities.Count() && quantities.Count() == prices.Count()) 
             {
